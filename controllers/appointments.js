@@ -108,7 +108,6 @@ exports.addAppointment = async (req, res, next) => {
 exports.updateAppointment = async (req, res, next) => {
   try {
     let appointment = await Appointment.findById(req.params.id);
-
     // Make sure user is the appointment owner
     if (
       appointment.user.toString() !== req.user.id &&
@@ -127,10 +126,14 @@ exports.updateAppointment = async (req, res, next) => {
       });
     }
 
-    appointment = await Appointment.findOneAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    appointment = await Appointment.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     res.status(200).json({ success: true, data: appointment });
   } catch (err) {
